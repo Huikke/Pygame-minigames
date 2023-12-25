@@ -2,6 +2,17 @@ import pygame
 import sys
 from random import randint
 
+# Set Apple location
+def spawn_apple():
+    while True:
+        apple_x = randint(1,15)
+        apple_y = randint(1,15)
+        if board[apple_x][apple_y] != 0:
+            continue
+        else:
+            board[apple_x][apple_y] = "a"
+            return apple_x, apple_y
+
 pygame.init()
 screen = pygame.display.set_mode((800,800))
 clock = pygame.time.Clock()
@@ -37,15 +48,7 @@ direction = (0, 1)
 fps_timer = 0
 
 # Ready()
-# Set Apple location
-while True:
-    apple_x = randint(1,15)
-    apple_y = randint(1,15)
-    if apple_x == 2 and apple_y == 2 or apple_x == 2 and apple_y == 3:
-        continue
-    else:
-        break
-board[apple_x][apple_y] = "a"
+apple_x, apple_y = spawn_apple()
 
 # Process()
 while True:
@@ -54,6 +57,9 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+    # Gameplay related variables
+    grow = False
 
     # Blit walls
     for i in range(0,800,50):
@@ -70,13 +76,14 @@ while True:
     # Blit snake
     for i in range(1,15):
         for j in range(1,15):
-            if board[i][j] != 0:
-                if board[i][j] == snake_len:
-                    screen.blit(snake_head,(j*50,i*50))
-                elif board[i][j] == "a":
-                    screen.blit(apple,(apple_y*50,apple_x*50))
-                else:
-                    screen.blit(snake_body,(j*50,i*50))
+            if board[i][j] == 0:
+                continue
+            elif board[i][j] == snake_len:
+                screen.blit(snake_head,(j*50,i*50))
+            elif board[i][j] == "a":
+                screen.blit(apple,(apple_y*50,apple_x*50))
+            else:
+                screen.blit(snake_body,(j*50,i*50))
 
     # Observes keys
     key_down = pygame.key.get_pressed()
@@ -90,17 +97,31 @@ while True:
         direction = (-1, 0)
 
     # Movement
-    if fps_timer == 60:
+    if fps_timer == 30:
         fps_timer = 0
+
+        # check head location
         for i in range(1,15):
             for j in range(1,15):
-                if board[i][j] != 0 and board[i][j] != "a":
-                    board[i][j] -= 1
-        for i in range(1,15):
-            for j in range(1,15):
-                if board[i][j] == snake_len - 1:
-                    print(i + direction[0], j + direction[1])
-                    board[i + direction[0]][j + direction[1]] = snake_len
+                if board[i][j] == snake_len:
+                    next_tile = (i + direction[0], j + direction[1])
+                    # If apple is eaten
+                    if board[i + direction[0]][j + direction[1]] == "a":
+                        grow = True
+                        snake_len += 1
+
+        # does depending if apple is eaten
+        if not grow:
+            for i in range(1,15):
+                for j in range(1,15):
+                    if board[i][j] != 0 and board[i][j] != "a":
+                        board[i][j] -= 1
+        else:
+            apple_x, apple_y = spawn_apple()
+
+        # places head to next tile
+        board[next_tile[0]][next_tile[1]] = snake_len
+
         # debug
         for i in board:
             print(i)
