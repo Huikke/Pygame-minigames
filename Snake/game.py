@@ -29,18 +29,9 @@ def blit_snake():
 pygame.init()
 screen = pygame.display.set_mode((800,800))
 clock = pygame.time.Clock()
-font = pygame.font.Font("font/PressStart2P-Regular.ttf", 50)
+font_big = pygame.font.Font("font/PressStart2P-Regular.ttf", 50)
+font_med = pygame.font.Font("font/PressStart2P-Regular.ttf", 20)
 pygame.display.set_caption("Snake")
-
-# Load art
-wall = pygame.image.load("art/wall.png").convert()
-ground = pygame.image.load("art/ground.png").convert()
-snake_head = pygame.image.load("art/snake_head.png").convert()
-rotated_snake_head = snake_head
-snake_body = pygame.image.load("art/snake_body.png").convert()
-apple = pygame.image.load("art/apple.png").convert_alpha()
-text_game_over = font.render("Game Over", False, "Black")
-text_game_over_rect = text_game_over.get_rect(center = (400, 400))
 
 # Make the board
 # 0 = ground, "w" = wall, 1..n = body, n+1 = head
@@ -60,6 +51,16 @@ snake_len = 2
 direction = (0, 1)
 fps_timer = 0
 game_over = False
+
+# Load art
+wall = pygame.image.load("art/wall.png").convert()
+ground = pygame.image.load("art/ground.png").convert()
+snake_head = pygame.image.load("art/snake_head.png").convert()
+rotated_snake_head = snake_head
+snake_body = pygame.image.load("art/snake_body.png").convert()
+apple = pygame.image.load("art/apple.png").convert_alpha()
+text_game_over = font_big.render("Game Over", False, "Black")
+text_game_over_rect = text_game_over.get_rect(center = (400, 400))
 
 # Ready()
 apple_x, apple_y = spawn_apple()
@@ -158,7 +159,12 @@ while True:
     else:
         screen.fill((66, 97, 158))
         blit_snake()
-        screen.blit(text_game_over,text_game_over_rect)
+        screen.blit(text_game_over, text_game_over_rect)
+        # Blit Score
+        text_score = font_med.render(f"Score: {snake_len - 2}", False, "Black")
+        text_score_rect = text_score.get_rect(midleft = (175, 475))
+        screen.blit(text_score, text_score_rect)
+
 
 
     pygame.display.update()
