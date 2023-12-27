@@ -46,6 +46,7 @@ for i in board:
 snake_len = 2
 direction = (0, 1)
 fps_timer = 0
+game_over = False
 
 # Ready()
 apple_x, apple_y = spawn_apple()
@@ -54,7 +55,7 @@ apple_x, apple_y = spawn_apple()
 while True:
     # Takes care of closing the program
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or game_over:
             pygame.quit()
             sys.exit()
 
@@ -106,14 +107,18 @@ while True:
                 if board[i][j] == snake_len:
                     # Stops snake moving backwards
                     if board[i + direction[0]][j + direction[1]] == snake_len - 1:
-                        next_tile = (i - direction[0], j - direction[1])
-                    else:
-                        next_tile = (i + direction[0], j + direction[1])
+                        direction = (-direction[0], -direction[1])
+                    
+                    next_tile = (i + direction[0], j + direction[1])
 
-                    # If apple is eaten
+                    # Detects if apple is eaten and is game over
                     if board[i + direction[0]][j + direction[1]] == "a":
                         grow = True
                         snake_len += 1
+                    elif board[i + direction[0]][j + direction[1]] == "w":
+                        game_over = True
+                    elif board[i + direction[0]][j + direction[1]] > 1:
+                        game_over = True
 
         # does depending if apple is eaten
         if not grow:
@@ -130,6 +135,7 @@ while True:
         # debug
         for i in board:
             print(i)
+
     else:
         fps_timer += 1
 
