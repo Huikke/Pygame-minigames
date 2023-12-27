@@ -62,30 +62,6 @@ while True:
     # Gameplay related variables
     grow = False
 
-    # Blit walls
-    for i in range(0,800,50):
-        screen.blit(wall,(i,0))
-        screen.blit(wall,(0,i))
-        screen.blit(wall,(750,i))
-        screen.blit(wall,(i,750))
-
-    # Blit grounds
-    for i in range(50, 750, 50):
-        for j in range(50, 750, 50):
-            screen.blit(ground,(i,j))
-
-    # Blit snake
-    for i in range(1,15):
-        for j in range(1,15):
-            if board[i][j] == 0:
-                continue
-            elif board[i][j] == snake_len:
-                screen.blit(snake_head,(j*50,i*50))
-            elif board[i][j] == "a":
-                screen.blit(apple,(apple_y*50,apple_x*50))
-            else:
-                screen.blit(snake_body,(j*50,i*50))
-
     # Observes keys
     key_down = pygame.key.get_pressed()
     if key_down[pygame.K_LEFT] or key_down[pygame.K_a]:
@@ -135,6 +111,42 @@ while True:
         # debug
         for i in board:
             print(i)
+    
+    # Blit walls
+    for i in range(0,800,50):
+        screen.blit(wall,(i,0))
+        screen.blit(wall,(0,i))
+        screen.blit(wall,(750,i))
+        screen.blit(wall,(i,750))
+
+    # Blit grounds
+    for i in range(50, 750, 50):
+        for j in range(50, 750, 50):
+            screen.blit(ground,(i,j))
+
+    # Rotate snake's head
+    match direction:
+        case (-1, 0):
+            angle = 0
+        case (0, -1):
+            angle = 90
+        case (1, 0):
+            angle = 180
+        case (0, 1):
+            angle = 270
+    rotated_snake_head = pygame.transform.rotate(snake_head, angle)
+
+    # Blit snake
+    for i in range(1,15):
+        for j in range(1,15):
+            if board[i][j] == 0:
+                continue
+            elif board[i][j] == snake_len:
+                screen.blit(rotated_snake_head,(j*50,i*50))
+            elif board[i][j] == "a":
+                screen.blit(apple,(apple_y*50,apple_x*50))
+            else:
+                screen.blit(snake_body,(j*50,i*50))
 
     else:
         fps_timer += 1
