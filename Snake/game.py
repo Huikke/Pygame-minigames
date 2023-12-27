@@ -26,6 +26,7 @@ pygame.display.set_caption("Snake")
 wall = pygame.image.load("art/wall.png").convert()
 ground = pygame.image.load("art/ground.png").convert()
 snake_head = pygame.image.load("art/snake_head.png").convert()
+rotated_snake_head = snake_head
 snake_body = pygame.image.load("art/snake_body.png").convert()
 apple = pygame.image.load("art/apple.png").convert_alpha()
 
@@ -108,6 +109,18 @@ while True:
         # places head to next tile
         board[next_tile[0]][next_tile[1]] = snake_len
 
+        # Rotate snake's head
+        match direction:
+            case (-1, 0):
+                angle = 0
+            case (0, -1):
+                angle = 90
+            case (1, 0):
+                angle = 180
+            case (0, 1):
+                angle = 270
+        rotated_snake_head = pygame.transform.rotate(snake_head, angle)
+
         # debug
         for i in board:
             print(i)
@@ -123,18 +136,6 @@ while True:
     for i in range(50, 750, 50):
         for j in range(50, 750, 50):
             screen.blit(ground,(i,j))
-
-    # Rotate snake's head
-    match direction:
-        case (-1, 0):
-            angle = 0
-        case (0, -1):
-            angle = 90
-        case (1, 0):
-            angle = 180
-        case (0, 1):
-            angle = 270
-    rotated_snake_head = pygame.transform.rotate(snake_head, angle)
 
     # Blit snake
     for i in range(1,15):
