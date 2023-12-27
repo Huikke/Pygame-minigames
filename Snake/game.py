@@ -97,14 +97,19 @@ while True:
         direction = (-1, 0)
 
     # Movement
-    if fps_timer == 30:
+    if fps_timer == 10:
         fps_timer = 0
 
         # check head location
         for i in range(1,15):
             for j in range(1,15):
                 if board[i][j] == snake_len:
-                    next_tile = (i + direction[0], j + direction[1])
+                    # Stops snake moving backwards
+                    if board[i + direction[0]][j + direction[1]] == snake_len - 1:
+                        next_tile = (i - direction[0], j - direction[1])
+                    else:
+                        next_tile = (i + direction[0], j + direction[1])
+
                     # If apple is eaten
                     if board[i + direction[0]][j + direction[1]] == "a":
                         grow = True
